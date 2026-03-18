@@ -1,0 +1,22 @@
+{
+    "degree": "Bachelor of Technology",
+    "title": "B.Tech. in Manufacturing Science & Engineering",
+    "institution": "VSSUT (UCE) Burla, Odisha, India",
+    "year": "2005–2009",
+    "year_of_completion": 2009,
+    "logo": "assets/images/education/btech3.jpg",
+    "description": [
+        "Four-year B.Tech. program focused on Manufacturing Science & Engineering, covering mechanical engineering principles, advanced manufacturing processes, robotics, and automation.",
+        "Developed a strong foundation for advanced research in manufacturing, process optimization, and engineering design."
+    ],
+    "thesis": {
+        "title": "Robotics Work Volume Optimization",
+        "supervisor": "Dr. Sumanta Panda",
+        "description": "Conducted research and project work on optimizing the work volume of industrial robotic manipulators to improve operational efficiency, flexibility, and reach for automated manufacturing systems."
+    },
+    "gallery": [
+        "assets/images/education/btech1.jpg",
+        "assets/images/education/btech2.jpg",
+        "assets/images/education/btech3.jpg"
+    ]
+}
