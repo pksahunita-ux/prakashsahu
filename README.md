@@ -469,5 +469,6 @@ git push
 - If you're unsure, validate your JSON at: https://jsonlint.com
 
 ---
+*Designed & Developed by **Saurabh Prajapati***
+---
 
-*For technical support, contact the website developer.*
