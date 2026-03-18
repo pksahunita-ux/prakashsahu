@@ -124,7 +124,11 @@ function getThemeIcon() {
 
 // --- Mobile Navigation ---
 
-function toggleMenu() {
+function toggleMenu(event) {
+    // FIX: Hamburger button click ko document listener tak propagate mat hone do
+    // Warna document listener same click me drawer turant band kar deta hai
+    if (event) event.stopPropagation();
+
     const nav = document.querySelector('.main-nav');
     const toggleBtn = document.querySelector('.mobile-menu-btn');
     const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
@@ -278,7 +282,7 @@ function renderHeader(activePageId) {
         'aria-expanded': 'false',
     });
     mobileMenuBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
-    mobileMenuBtn.addEventListener('click', toggleMenu);
+    mobileMenuBtn.addEventListener('click', (e) => toggleMenu(e));
 
     const controls = el('div', { className: 'header-controls' }, [themeBtn, mobileMenuBtn]);
 
