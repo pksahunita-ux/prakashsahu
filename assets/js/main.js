@@ -176,10 +176,8 @@ function toggleMenu() {
         toggleBtn.innerHTML = menuIcon;
         document.body.style.overflow = ''; // Restore scrolling
         
-        // Reset all dropdowns when closing the menu
-        setTimeout(() => {
-            document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
-        }, 300); // Wait for transition
+        // Ensure ALL dropdowns are closed when the drawer closes
+        document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
     } else {
         nav.classList.add('active');
         toggleBtn.setAttribute('aria-expanded', 'true');
@@ -192,22 +190,25 @@ function toggleMenu() {
  * Handles dropdown toggling on mobile.
  */
 function toggleDropdown(event) {
-    // If it's a mobile view, handle the toggle
-    if (window.innerWidth <= 768) {
+    // Media query matching the CSS breakpoint
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    
+    if (isMobile) {
+        // Prevent default and stop propagation only for mobile dropdown toggles
         event.preventDefault();
         event.stopPropagation();
 
-        const parent = event.currentTarget.parentElement; // The li.dropdown
-        const isOpen = parent.classList.contains('open');
+        const parent = event.currentTarget.closest('.dropdown');
+        if (!parent) return;
 
-        // Close ALL other open dropdowns first for a cleaner "accordion" feel
+        // Close other open dropdowns for a clean accordion effect
         document.querySelectorAll('.dropdown.open').forEach(openDropdown => {
             if (openDropdown !== parent) {
                 openDropdown.classList.remove('open');
             }
         });
 
-        // Toggle the current one
+        // Toggle visibility of the current one
         parent.classList.toggle('open');
     }
 }
@@ -230,7 +231,7 @@ function renderHeader(activePageId) {
         if (item.children) {
             // Dropdown Item
             const label = el('a', {
-                href: '#',
+                href: 'javascript:void(0)',
                 className: 'dropdown-toggle',
                 'aria-haspopup': 'true',
                 onclick: toggleDropdown
