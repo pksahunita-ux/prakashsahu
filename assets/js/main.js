@@ -38,11 +38,6 @@ const CONFIG = {
 
 // --- Utilities ---
 
-/**
- * Fetch JSON data from a given path with error handling.
- * @param {string} filename - The name of the JSON file to fetch.
- * @returns {Promise<Object|null>} The parsed JSON data or null on failure.
- */
 async function fetchJSON(filename) {
     try {
         const response = await fetch(`${CONFIG.DATA_DIR}${filename}`);
@@ -51,23 +46,13 @@ async function fetchJSON(filename) {
         }
         return await response.json();
     } catch (error) {
-        // In production, we might want to log this to an analytics service
-        // console.error(`Failed to load ${filename}:`, error);
         return null;
     }
 }
 
-/**
- * Create a DOM element with specified attributes and children.
- * @param {string} tag - HTML tag name.
- * @param {Object} attributes - Key-value pairs for attributes (class, id, etc.).
- * @param {Array<string|Node>} children - Text or DOM nodes to append.
- * @returns {HTMLElement} The created element.
- */
 function el(tag, attributes = {}, children = []) {
     const element = document.createElement(tag);
 
-    // Set attributes and properties
     Object.entries(attributes).forEach(([key, value]) => {
         if (key === 'className') {
             element.className = value;
@@ -84,7 +69,6 @@ function el(tag, attributes = {}, children = []) {
         }
     });
 
-    // Append children
     children.forEach(child => {
         if (typeof child === 'string') {
             element.appendChild(document.createTextNode(child));
@@ -96,21 +80,13 @@ function el(tag, attributes = {}, children = []) {
     return element;
 }
 
-/**
- * Renders a loading state or error message.
- * @param {HTMLElement} container - The container to render into.
- * @param {string} message - Message to display.
- */
 function renderMessage(container, message) {
-    container.innerHTML = ''; // Clear previous content
+    container.innerHTML = '';
     container.appendChild(el('p', { className: 'status-message' }, [message]));
 }
 
 // --- Theme Management ---
 
-/**
- * Initializes the theme based on local storage or system preference.
- */
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
@@ -120,9 +96,6 @@ function initTheme() {
     }
 }
 
-/**
- * Toggles between light and dark themes.
- */
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -130,7 +103,6 @@ function toggleTheme() {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
 
-    // Update the icon
     const btn = document.querySelector('.theme-toggle');
     if (btn) {
         btn.innerHTML = '';
@@ -138,35 +110,25 @@ function toggleTheme() {
     }
 }
 
-/**
- * Returns the appropriate SVG icon for the current theme.
- * @returns {SVGElement} The SVG icon element.
- */
 function getThemeIcon() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const isDark = currentTheme === 'dark';
 
-    // Simple SVG icons
     const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-
     const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
 
     const wrapper = document.createElement('span');
-    wrapper.innerHTML = isDark ? sunIcon : moonIcon; // Show sun in dark mode (to switch to light), moon in light mode
+    wrapper.innerHTML = isDark ? sunIcon : moonIcon;
     return wrapper.firstChild;
 }
 
 // --- Mobile Navigation ---
 
-/**
- * Toggles the mobile navigation menu.
- */
 function toggleMenu() {
     const nav = document.querySelector('.main-nav');
     const toggleBtn = document.querySelector('.mobile-menu-btn');
     const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
 
-    // Toggle icons
     const menuIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
     const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
@@ -174,51 +136,77 @@ function toggleMenu() {
         nav.classList.remove('active');
         toggleBtn.setAttribute('aria-expanded', 'false');
         toggleBtn.innerHTML = menuIcon;
-        document.body.style.overflow = ''; // Restore scrolling
-        
-        // Ensure ALL dropdowns are closed when the drawer closes
+        document.body.style.overflow = '';
+        // Close all open dropdowns when drawer closes
         document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
     } else {
         nav.classList.add('active');
         toggleBtn.setAttribute('aria-expanded', 'true');
         toggleBtn.innerHTML = closeIcon;
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        document.body.style.overflow = 'hidden';
     }
 }
 
 /**
- * Handles dropdown toggling on mobile.
+ * FIX: toggleDropdown ab properly kaam karta hai mobile me.
+ * - isMobile check hataya — CSS desktop pe hover handle karta hai
+ * - event.stopPropagation() rakha taaki document click se conflict na ho
  */
 function toggleDropdown(event) {
-    // Media query matching the CSS breakpoint
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    
-    if (isMobile) {
-        // Prevent default and stop propagation only for mobile dropdown toggles
-        event.preventDefault();
-        event.stopPropagation();
 
-        const parent = event.currentTarget.closest('.dropdown');
-        if (!parent) return;
+    if (!isMobile) return; // Desktop pe CSS hover se handle hoga
 
-        // Close other open dropdowns for a clean accordion effect
-        document.querySelectorAll('.dropdown.open').forEach(openDropdown => {
-            if (openDropdown !== parent) {
-                openDropdown.classList.remove('open');
-            }
-        });
+    event.preventDefault();
+    event.stopPropagation(); // Zaruri hai — document click listener se bachao
 
-        // Toggle visibility of the current one
-        parent.classList.toggle('open');
+    const parent = event.currentTarget.closest('.dropdown');
+    if (!parent) return;
+
+    const isAlreadyOpen = parent.classList.contains('open');
+
+    // Pehle sabhi open dropdowns band karo (accordion effect)
+    document.querySelectorAll('.dropdown.open').forEach(openDropdown => {
+        openDropdown.classList.remove('open');
+    });
+
+    // Agar ye already open nahi tha, toh open karo
+    if (!isAlreadyOpen) {
+        parent.classList.add('open');
     }
+}
+
+/**
+ * FIX: Document-level click listener — drawer ke bahar click karne par drawer band ho
+ * Lekin dropdown toggle click ko interfere nahi karna chahiye
+ */
+function initMobileNavClose() {
+    document.addEventListener('click', function (event) {
+        const nav = document.querySelector('.main-nav');
+        const toggleBtn = document.querySelector('.mobile-menu-btn');
+
+        if (!nav || !toggleBtn) return;
+
+        const isOpen = toggleBtn.getAttribute('aria-expanded') === 'true';
+        if (!isOpen) return;
+
+        // Agar click nav ke andar ya toggle button par hai, toh kuch mat karo
+        const clickedInsideNav = nav.contains(event.target);
+        const clickedToggle = toggleBtn.contains(event.target);
+
+        if (!clickedInsideNav && !clickedToggle) {
+            // Drawer ke bahar click — drawer band karo
+            nav.classList.remove('active');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            toggleBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
+            document.body.style.overflow = '';
+            document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+        }
+    });
 }
 
 // --- Component Renderers ---
 
-/**
- * Renders the site header and navigation.
- * @param {string} activePageId - The ID of the current page.
- */
 function renderHeader(activePageId) {
     const header = document.getElementById('site-header');
     if (!header) return;
@@ -229,20 +217,21 @@ function renderHeader(activePageId) {
         let li;
 
         if (item.children) {
-            // Dropdown Item
             const label = el('a', {
                 href: 'javascript:void(0)',
                 className: 'dropdown-toggle',
                 'aria-haspopup': 'true',
-                onclick: toggleDropdown
             }, [
                 item.label,
-                // Arrow Icon
-                el('span', { 
-                    className: 'arrow-icon', 
-                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>` 
+                el('span', {
+                    className: 'arrow-icon',
+                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`
                 })
             ]);
+
+            // FIX: addEventListener use karo, onclick property nahi
+            // Isse event propagation properly kaam karta hai
+            label.addEventListener('click', toggleDropdown);
 
             const dropdownMenu = el('ul', { className: 'dropdown-menu' });
 
@@ -264,7 +253,6 @@ function renderHeader(activePageId) {
             li = el('li', { className: 'dropdown' }, [label, dropdownMenu]);
 
         } else {
-            // Normal Item
             const link = el('a', { href: item.link }, [item.label]);
             if (item.id === activePageId) {
                 link.setAttribute('aria-current', 'page');
@@ -278,39 +266,21 @@ function renderHeader(activePageId) {
 
     const nav = el('nav', { className: 'main-nav' }, [navList]);
 
-    // Theme Toggle
     const themeBtn = el('button', {
         className: 'theme-toggle',
         ariaLabel: 'Toggle Dark Mode',
-        onclick: toggleTheme
-    }, [
-        getThemeIcon()
-    ]);
+    }, [getThemeIcon()]);
+    themeBtn.addEventListener('click', toggleTheme);
 
-    // Mobile Menu Button
     const mobileMenuBtn = el('button', {
         className: 'mobile-menu-btn',
         ariaLabel: 'Toggle Navigation',
         'aria-expanded': 'false',
-        onclick: toggleMenu
-    }, [
-        // Default Hamburger Icon
-        el('span', { innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>` })
-    ]);
-    // Fix: innerHTML in el helper doesn't work directly like that because we create text nodes for strings.
-    // Let's just set innerHTML on the button manually or use a helper that returns the node.
-    // Simplifying:
+    });
     mobileMenuBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
+    mobileMenuBtn.addEventListener('click', toggleMenu);
 
-
-    // Container for nav + buttons
-    // On mobile: Branding | [ThemeToggle] [MobileMenu]
     const controls = el('div', { className: 'header-controls' }, [themeBtn, mobileMenuBtn]);
-
-    // We want the nav to be part of the container context or separate?
-    // Structure: 
-    // [Branding]       [Controls: Theme, Menu]
-    // [Main Nav (starts hidden on mobile)]
 
     const branding = el('div', { className: 'branding' }, [
         el('a', { href: 'index.html', className: 'site-title' }, [
@@ -325,9 +295,6 @@ function renderHeader(activePageId) {
     header.appendChild(container);
 }
 
-/**
- * Renders the site footer.
- */
 function renderFooter() {
     const footer = document.getElementById('site-footer');
     if (!footer) return;
@@ -341,34 +308,19 @@ function renderFooter() {
     ]));
 }
 
-// --- Helper Renderer ---
-/**
- * Renders a standardized page hero section.
- * @param {HTMLElement} container - Container to append to.
- * @param {string} title - Page title.
- * @param {string} imagePath - Path to the hero image.
- */
 function renderPageHero(container, title, imagePath) {
     const heroContent = [
-        el('h1', { className: 'hero-title-overlay' }, [title]) // Optional overlay title
+        el('h1', { className: 'hero-title-overlay' }, [title])
     ];
 
-    // Create hero container
     const hero = el('div', { className: 'page-hero main-hero' }, [
         el('img', { src: imagePath, alt: title, className: 'hero-img' }),
         el('div', { className: 'hero-overlay' }, heroContent)
     ]);
 
     container.appendChild(hero);
-    container.appendChild(hero);
 }
 
-/**
- * Renders a scrolling hero carousel.
- * @param {HTMLElement} container - Container to append to.
- * @param {string} title - Page title.
- * @param {Array<string>} images - Array of image paths.
- */
 function renderHeroCarousel(container, title, images) {
     const heroContent = [
         el('h1', { className: 'hero-title-overlay' }, [title])
@@ -392,9 +344,6 @@ function renderHeroCarousel(container, title, images) {
 
 // --- Page Specific Renderers ---
 
-/**
- * Renders the Professor's Profile page from profile.json only (no contact details).
- */
 async function renderProfile(container) {
     const profile = await fetchJSON('profile.json');
     if (!profile) {
@@ -402,7 +351,6 @@ async function renderProfile(container) {
         return;
     }
 
-    // Profile Image
     const profileImage = el('img', {
         src: 'assets/images/profile/prof_sahu.jpg',
         alt: profile.name || 'Profile Image',
@@ -410,7 +358,6 @@ async function renderProfile(container) {
     });
     profileImage.onerror = () => { profileImage.style.display = 'none'; };
 
-    // Profile Details
     const profileDetails = el('div', { className: 'profile-details' }, [
         el('h1', { className: 'profile-name' }, [`${profile.name}`]),
         el('h2', { className: 'profile-title' }, [profile.designation || ""]),
@@ -423,12 +370,10 @@ async function renderProfile(container) {
         ])
     ]);
 
-    // Short Bio
     const bioSection = el('section', { className: 'profile-bio-section' }, [
         el('p', { className: 'profile-bio' }, [profile.shortBio || ""])
     ]);
 
-    // Research Profiles / Social Links
     const socialLinksSection = el('section', { className: 'profile-socials-section' });
     const socialLinksTitle = el('h4', { className: 'profile-socials-title' }, ['Research Profiles']);
     const socialLinks = el('div', { className: 'profile-socials' });
@@ -452,7 +397,6 @@ async function renderProfile(container) {
     socialLinksSection.appendChild(socialLinksTitle);
     socialLinksSection.appendChild(socialLinks);
 
-    // Render all sections (no contact section)
     container.appendChild(
         el('section', { className: 'profile-header' }, [
             profileDetails,
@@ -464,9 +408,6 @@ async function renderProfile(container) {
     container.appendChild(socialLinksSection);
 }
 
-/**
- * Renders the Experience page.
- */
 async function renderExperience(container) {
     const data = await fetchJSON('experience.json');
     if (!data || !data.experience) {
@@ -475,16 +416,11 @@ async function renderExperience(container) {
     }
 
     const fragment = document.createDocumentFragment();
-
-    // Add Hero Image
     renderPageHero(fragment, 'Experience', 'assets/images/hero/experince.png');
-
-    // fragment.appendChild(el('h1', {}, ['Professional Experience']));
 
     const list = el('ul', { className: 'timeline-list' });
 
     data.experience.forEach(exp => {
-        // Generate ID for deep linking
         let itemId = '';
         const posLower = exp.position.toLowerCase();
         if (posLower.includes('post-doctoral') || posLower.includes('post doc')) itemId = 'post-doc';
@@ -504,9 +440,6 @@ async function renderExperience(container) {
     container.appendChild(fragment);
 }
 
-/**
- * Renders the Research page.
- */
 async function renderResearch(container) {
     const data = await fetchJSON('research.json');
     if (!data) {
@@ -516,7 +449,6 @@ async function renderResearch(container) {
 
     const fragment = document.createDocumentFragment();
 
-    // Add Hero Carousel
     const resImages = [
         'assets/images/hero/research2.jpg',
         'assets/images/hero/research1.png',
@@ -542,9 +474,6 @@ async function renderResearch(container) {
     container.appendChild(fragment);
 }
 
-/**
- * Renders the Publications page.
- */
 async function renderPublications(container) {
     const data = await fetchJSON('publications.json');
     if (!data) {
@@ -554,37 +483,29 @@ async function renderPublications(container) {
 
     const fragment = document.createDocumentFragment();
 
-    // Add Hero Carousel
     const pubImages = [
         'assets/images/hero/journal1.png',
         'assets/images/hero/journal2.png'
     ];
     renderHeroCarousel(fragment, 'Publications', pubImages);
 
-    // Helper to render a publication list
     const renderPubList = (items, title) => {
         if (!items || items.length === 0) return null;
 
         const section = el('section', { className: 'pub-section' });
         section.appendChild(el('h2', {}, [title]));
 
-        const list = el('ol', { className: 'pub-list' }); // Ordered list for academic citations
+        const list = el('ol', { className: 'pub-list' });
 
         items.forEach(pub => {
-            // Construct citation string/elements
             const citation = [];
 
-            // Authors
             if (pub.authors) citation.push(el('span', { className: 'authors' }, [pub.authors + '. ']));
-
-            // Title
             if (pub.title) citation.push(el('strong', { className: 'pub-title' }, [`"${pub.title}". `]));
 
-            // Venue/Journal
             const venue = pub.journal || pub.conference || pub.book;
             if (venue) citation.push(el('em', { className: 'venue' }, [venue + ', ']));
 
-            // Details (Vol, pages, year)
             const detailsParts = [];
             if (pub.volume) detailsParts.push(`Vol. ${pub.volume}`);
             if (pub.pages) detailsParts.push(`pp. ${pub.pages}`);
@@ -595,7 +516,6 @@ async function renderPublications(container) {
                 citation.push(el('span', { className: 'pub-details' }, [detailsParts.join(', ') + '.']));
             }
 
-            // DOI Link
             if (pub.doi) {
                 const doiUrl = pub.doi.startsWith('http') ? pub.doi : `https://doi.org/${pub.doi}`;
                 citation.push(el('a', { href: doiUrl, className: 'doi-link', target: '_blank' }, [' [DOI]']));
@@ -620,9 +540,6 @@ async function renderPublications(container) {
     container.appendChild(fragment);
 }
 
-/**
- * Renders the Teaching page.
- */
 async function renderTeaching(container) {
     const data = await fetchJSON('teaching.json');
     if (!data) {
@@ -632,7 +549,6 @@ async function renderTeaching(container) {
 
     const fragment = document.createDocumentFragment();
 
-    // Add Hero Carousel
     const teachImages = [
         'assets/images/hero/teaching2.png',
         'assets/images/hero/teaching1.png'
@@ -647,7 +563,6 @@ async function renderTeaching(container) {
 
         const list = el('ul', { className: 'course-list' });
         courses.forEach(course => {
-            // Check if course is string or object
             const courseName = typeof course === 'string' ? course : course.title;
             list.appendChild(el('li', {}, [courseName]));
         });
@@ -665,9 +580,6 @@ async function renderTeaching(container) {
     container.appendChild(fragment);
 }
 
-/**
- * Renders the Students page.
- */
 async function renderStudents(container) {
     const data = await fetchJSON('students.json');
     if (!data) {
@@ -677,14 +589,12 @@ async function renderStudents(container) {
 
     const fragment = document.createDocumentFragment();
 
-    // Add Hero Carousel
     const studImages = [
         'assets/images/hero/student&mentor1.png',
         'assets/images/hero/student&mentor2.png'
     ];
     renderHeroCarousel(fragment, 'Students & Mentorship', studImages);
 
-    // PhD Scholars
     if (data.phdScholars && data.phdScholars.length > 0) {
         fragment.appendChild(el('h2', {}, ['PhD Scholars']));
         const list = el('ul', { className: 'student-list' });
@@ -699,7 +609,6 @@ async function renderStudents(container) {
         fragment.appendChild(list);
     }
 
-    // Masters Students
     if (data.mastersStudents && data.mastersStudents.length > 0) {
         fragment.appendChild(el('h2', {}, ['Masters Students']));
         const list = el('ul', { className: 'student-list' });
@@ -714,7 +623,6 @@ async function renderStudents(container) {
         fragment.appendChild(list);
     }
 
-    // Bachelor Projects
     if (data.bachelorProjects && data.bachelorProjects.length > 0) {
         fragment.appendChild(el('h2', {}, ['Bachelor Projects']));
         const list = el('ul', { className: 'student-list' });
@@ -733,9 +641,6 @@ async function renderStudents(container) {
     container.appendChild(fragment);
 }
 
-/**
- * Renders the Events page.
- */
 async function renderEvents(container) {
     const data = await fetchJSON('events.json');
     if (!data) {
@@ -745,11 +650,9 @@ async function renderEvents(container) {
 
     const fragment = document.createDocumentFragment();
 
-    // Add Hero Carousel
     const eventImages = [
         'assets/images/hero/confrence1.png',
         'assets/images/hero/confrence 2.png'
-
     ];
     renderHeroCarousel(fragment, 'Events & Conferences', eventImages);
 
@@ -782,9 +685,6 @@ async function renderEvents(container) {
     container.appendChild(fragment);
 }
 
-/**
- * Renders the Contact page.
- */
 async function renderContact(container) {
     const data = await fetchJSON('contact.json');
     if (!data) {
@@ -793,14 +693,11 @@ async function renderContact(container) {
     }
 
     const fragment = document.createDocumentFragment();
-
     renderPageHero(fragment, 'Contact', 'assets/images/hero/contact1.png');
-    // fragment.appendChild(el('h1', {}, ['Contact']));
 
     const card = el('div', { className: 'contact-card' });
 
     if (data.email) {
-        // Handle multiple emails separated by comma
         const emails = data.email.split(',').map(e => e.trim());
         const emailContainer = el('p', {}, [el('strong', {}, ['Email: '])]);
 
@@ -833,11 +730,6 @@ async function renderContact(container) {
     container.appendChild(fragment);
 }
 
-/**
- * Renders a detailed degree page (B.Tech, M.Tech, PhD, PostDoc).
- * @param {HTMLElement} container - The container to render into.
- * @param {string} jsonFilename - The JSON file to fetch data from.
- */
 async function renderDegreeDetail(container, jsonFilename) {
     const data = await fetchJSON(jsonFilename);
     if (!data) {
@@ -847,22 +739,18 @@ async function renderDegreeDetail(container, jsonFilename) {
 
     const fragment = document.createDocumentFragment();
 
-    // Hero Section with Carousel
     const heroImages = [];
     if (data.heroImage) heroImages.push(data.heroImage);
     if (data.gallery) heroImages.push(...data.gallery);
 
-    // If we have multiple images, use carousel, else single hero
     if (heroImages.length > 1) {
         renderHeroCarousel(fragment, data.title, heroImages);
     } else if (heroImages.length === 1) {
         renderPageHero(fragment, data.title, heroImages[0]);
     } else {
-        // Fallback title if no images
         fragment.appendChild(el('h1', {}, [data.title]));
     }
 
-    // Header Section (Logo + Meta)
     const headerContent = [];
     if (data.logo) {
         const logo = el('img', { src: data.logo, alt: 'Institution Logo', className: 'detail-logo' });
@@ -878,7 +766,6 @@ async function renderDegreeDetail(container, jsonFilename) {
     const header = el('header', { className: 'detail-header' }, headerContent);
     fragment.appendChild(header);
 
-    // Description
     if (data.description && Array.isArray(data.description)) {
         const descSection = el('section', { className: 'detail-description' });
         data.description.forEach(para => {
@@ -887,7 +774,6 @@ async function renderDegreeDetail(container, jsonFilename) {
         fragment.appendChild(descSection);
     }
 
-    // Thesis Section
     if (data.thesis) {
         const thesisBox = el('div', { className: 'thesis-box' }, [
             el('h2', {}, ['Thesis']),
@@ -898,36 +784,28 @@ async function renderDegreeDetail(container, jsonFilename) {
         fragment.appendChild(thesisBox);
     }
 
-    // Gallery removed as it is now in the carousel
-
     container.appendChild(fragment);
 }
 
 // --- Application Entry Point ---
 
-/**
- * Initializes the application.
- * Detects the current page based on the `data-page` attribute on the `body` tag.
- */
 async function init() {
-    // Initialize Theme first
     initTheme();
 
     const body = document.body;
     const pageId = body.dataset.page || 'index';
     const mainContainer = document.getElementById('main-content');
 
-    // Render shared components
     try {
         renderHeader(pageId);
         renderFooter();
+        // FIX: Document-level close listener initialize karo header render ke baad
+        initMobileNavClose();
     } catch (error) {
         console.error('Header/Footer render error:', error);
     }
 
-    // Render page-specific content
     if (mainContainer) {
-        // Set loading state
         renderMessage(mainContainer, 'Loading content...');
 
         try {
@@ -973,13 +851,9 @@ async function init() {
                     break;
                 default:
                     renderMessage(mainContainer, 'Page not found.');
-                    return; // Return early if page not found
+                    return;
             }
 
-            // Successfully loaded: verify if we still have the loading message before removing it
-            // or if the content was just appended. 
-            // The renderers append content. If we didn't crash, we assume success.
-            // We should remove the 'Loading...' message if it exists.
             const loadingMsg = mainContainer.querySelector('.status-message');
             if (loadingMsg && loadingMsg.textContent === 'Loading content...') {
                 loadingMsg.remove();
@@ -992,7 +866,6 @@ async function init() {
     }
 }
 
-// Start the application when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
