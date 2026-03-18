@@ -1,0 +1,15 @@
+{
+    "title_default": "Prakash Kumar Sahu | Professor of Computer Science",
+    "description_default": "Academic portfolio of Prakash Kumar Sahu, Professor of Computer Science at University Name.",
+    "keywords": "computer science, research, ai, machine learning, professor",
+    "pages": {
+        "index": {
+            "title": "Home | Prakash Kumar Sahu",
+            "description": "Professor Prakash Kumar Sahu's academic home page."
+        },
+        "publications": {
+            "title": "Publications | Prakash Kumar Sahu",
+            "description": "List of research publications by Prakash Kumar Sahu."
+        }
+    }
+}
