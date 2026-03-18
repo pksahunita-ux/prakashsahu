@@ -105,106 +105,103 @@ function toggleTheme() {
 
     const btn = document.querySelector('.theme-toggle');
     if (btn) {
-        btn.innerHTML = '';
-        btn.appendChild(getThemeIcon());
+        btn.innerHTML = newTheme === 'dark' ? ICONS.sun : ICONS.moon;
     }
 }
 
 function getThemeIcon() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const isDark = currentTheme === 'dark';
-
-    const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-    const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-
-    const wrapper = document.createElement('span');
-    wrapper.innerHTML = isDark ? sunIcon : moonIcon;
-    return wrapper.firstChild;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return isDark ? ICONS.sun : ICONS.moon;
 }
+
+// --- SVG Icons (ek jagah — reuse karo) ---
+const ICONS = {
+    menu:  `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
+    close: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+    sun:   `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+    moon:  `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+    arrow: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`
+};
 
 // --- Mobile Navigation ---
 
-function toggleMenu(event) {
-    // FIX: Hamburger button click ko document listener tak propagate mat hone do
-    // Warna document listener same click me drawer turant band kar deta hai
-    if (event) event.stopPropagation();
-
-    const nav = document.querySelector('.main-nav');
+// Shared drawer-close helper — ek jagah se sab handle
+function _closeDrawer() {
+    const nav       = document.querySelector('.main-nav');
     const toggleBtn = document.querySelector('.mobile-menu-btn');
-    const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+    if (!nav || !toggleBtn) return;
+    nav.classList.remove('active');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    toggleBtn.innerHTML = ICONS.menu;
+    document.body.style.overflow = '';
+    document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+}
 
-    const menuIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
-    const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+/**
+ * BUG FIX: stopPropagation hataya — SVG ke andar <line>/<path> elements pe
+ * click karne par event.target button nahi hota, SVG child hota hai.
+ * stopPropagation se button ke center/right click kaam nahi karta tha.
+ * 
+ * Ab document listener me closest() use karta hai jo SVG children ke
+ * saath bhi sahi kaam karta hai.
+ */
+function toggleMenu() {
+    const nav       = document.querySelector('.main-nav');
+    const toggleBtn = document.querySelector('.mobile-menu-btn');
+    if (!nav || !toggleBtn) return;
 
-    if (isExpanded) {
-        nav.classList.remove('active');
-        toggleBtn.setAttribute('aria-expanded', 'false');
-        toggleBtn.innerHTML = menuIcon;
-        document.body.style.overflow = '';
-        // Close all open dropdowns when drawer closes
-        document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+    const isOpen = toggleBtn.getAttribute('aria-expanded') === 'true';
+
+    if (isOpen) {
+        _closeDrawer();
     } else {
         nav.classList.add('active');
         toggleBtn.setAttribute('aria-expanded', 'true');
-        toggleBtn.innerHTML = closeIcon;
+        toggleBtn.innerHTML = ICONS.close;
         document.body.style.overflow = 'hidden';
     }
 }
 
 /**
- * FIX: toggleDropdown ab properly kaam karta hai mobile me.
- * - isMobile check hataya — CSS desktop pe hover handle karta hai
- * - event.stopPropagation() rakha taaki document click se conflict na ho
+ * BUG FIX: Mobile dropdown toggle.
+ * stopPropagation sirf yahan zaruri hai — dropdown click ko
+ * document listener "bahar click" na samjhe.
  */
 function toggleDropdown(event) {
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
-
-    if (!isMobile) return; // Desktop pe CSS hover se handle hoga
+    if (!isMobile) return;
 
     event.preventDefault();
-    event.stopPropagation(); // Zaruri hai — document click listener se bachao
+    event.stopPropagation();
 
     const parent = event.currentTarget.closest('.dropdown');
     if (!parent) return;
 
-    const isAlreadyOpen = parent.classList.contains('open');
-
-    // Pehle sabhi open dropdowns band karo (accordion effect)
-    document.querySelectorAll('.dropdown.open').forEach(openDropdown => {
-        openDropdown.classList.remove('open');
-    });
-
-    // Agar ye already open nahi tha, toh open karo
-    if (!isAlreadyOpen) {
-        parent.classList.add('open');
-    }
+    const wasOpen = parent.classList.contains('open');
+    document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+    if (!wasOpen) parent.classList.add('open');
 }
 
 /**
- * FIX: Document-level click listener — drawer ke bahar click karne par drawer band ho
- * Lekin dropdown toggle click ko interfere nahi karna chahiye
+ * BUG FIX: Document-level listener.
+ * closest() use karo — SVG children (<line>, <path>) ke saath bhi
+ * sahi kaam karta hai, unlike contains() jo kabhi kabhi fail karta tha.
  */
 function initMobileNavClose() {
     document.addEventListener('click', function (event) {
-        const nav = document.querySelector('.main-nav');
         const toggleBtn = document.querySelector('.mobile-menu-btn');
-
-        if (!nav || !toggleBtn) return;
+        if (!toggleBtn) return;
 
         const isOpen = toggleBtn.getAttribute('aria-expanded') === 'true';
         if (!isOpen) return;
 
-        // Agar click nav ke andar ya toggle button par hai, toh kuch mat karo
-        const clickedInsideNav = nav.contains(event.target);
-        const clickedToggle = toggleBtn.contains(event.target);
+        // closest() DOM tree upar jaake element dhundh leta hai
+        // SVG children ke liye bhi reliable hai
+        const clickedBtn = !!event.target.closest('.mobile-menu-btn');
+        const clickedNav = !!event.target.closest('.main-nav');
 
-        if (!clickedInsideNav && !clickedToggle) {
-            // Drawer ke bahar click — drawer band karo
-            nav.classList.remove('active');
-            toggleBtn.setAttribute('aria-expanded', 'false');
-            toggleBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
-            document.body.style.overflow = '';
-            document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+        if (!clickedBtn && !clickedNav) {
+            _closeDrawer();
         }
     });
 }
@@ -222,23 +219,23 @@ function renderHeader(activePageId) {
 
         if (item.children) {
             const label = el('a', {
-                href: 'javascript:void(0)',
+                href: '#',
                 className: 'dropdown-toggle',
                 'aria-haspopup': 'true',
+                'aria-expanded': 'false'
             }, [
                 item.label,
                 el('span', {
                     className: 'arrow-icon',
-                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`
+                    innerHTML: ICONS.arrow
                 })
             ]);
 
-            // FIX: addEventListener use karo, onclick property nahi
-            // Isse event propagation properly kaam karta hai
+            // BUG FIX: addEventListener (onclick property se stopPropagation
+            // reliable nahi hota tha)
             label.addEventListener('click', toggleDropdown);
 
             const dropdownMenu = el('ul', { className: 'dropdown-menu' });
-
             let isActiveParent = false;
 
             item.children.forEach(child => {
@@ -268,21 +265,26 @@ function renderHeader(activePageId) {
         navList.appendChild(li);
     });
 
-    const nav = el('nav', { className: 'main-nav' }, [navList]);
+    const nav = el('nav', { className: 'main-nav', 'aria-label': 'Main navigation' }, [navList]);
 
     const themeBtn = el('button', {
         className: 'theme-toggle',
-        ariaLabel: 'Toggle Dark Mode',
-    }, [getThemeIcon()]);
+        'aria-label': 'Toggle Dark Mode',
+        type: 'button'
+    });
+    themeBtn.innerHTML = getThemeIcon();
     themeBtn.addEventListener('click', toggleTheme);
 
     const mobileMenuBtn = el('button', {
         className: 'mobile-menu-btn',
-        ariaLabel: 'Toggle Navigation',
+        'aria-label': 'Toggle Navigation',
         'aria-expanded': 'false',
+        type: 'button'
     });
-    mobileMenuBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
-    mobileMenuBtn.addEventListener('click', (e) => toggleMenu(e));
+    mobileMenuBtn.innerHTML = ICONS.menu;
+    // BUG FIX: seedha toggleMenu — koi wrapper function nahi
+    // stopPropagation yahan nahi — document listener closest() se handle karta hai
+    mobileMenuBtn.addEventListener('click', toggleMenu);
 
     const controls = el('div', { className: 'header-controls' }, [themeBtn, mobileMenuBtn]);
 
@@ -312,24 +314,21 @@ function renderFooter() {
     ]));
 }
 
-function renderPageHero(container, title, imagePath) {
-    const heroContent = [
-        el('h1', { className: 'hero-title-overlay' }, [title])
-    ];
+// --- Helper Renderers ---
 
+function renderPageHero(container, title, imagePath) {
+    // NOTE: Aap yahan imagePath badal sakte ho apne hisaab se
     const hero = el('div', { className: 'page-hero main-hero' }, [
         el('img', { src: imagePath, alt: title, className: 'hero-img' }),
-        el('div', { className: 'hero-overlay' }, heroContent)
+        el('div', { className: 'hero-overlay' }, [
+            el('h1', { className: 'hero-title-overlay' }, [title])
+        ])
     ]);
-
     container.appendChild(hero);
 }
 
 function renderHeroCarousel(container, title, images) {
-    const heroContent = [
-        el('h1', { className: 'hero-title-overlay' }, [title])
-    ];
-
+    // NOTE: Aap images array badal sakte ho apne hisaab se
     const slides = images.map(src =>
         el('div', { className: 'carousel-item' }, [
             el('img', { src: src, alt: title, className: 'hero-img' })
@@ -340,7 +339,9 @@ function renderHeroCarousel(container, title, images) {
 
     const wrapper = el('div', { className: 'carousel-wrapper main-hero' }, [
         carousel,
-        el('div', { className: 'hero-overlay' }, heroContent)
+        el('div', { className: 'hero-overlay' }, [
+            el('h1', { className: 'hero-title-overlay' }, [title])
+        ])
     ]);
 
     container.appendChild(wrapper);
@@ -362,20 +363,24 @@ async function renderProfile(container) {
     });
     profileImage.onerror = () => { profileImage.style.display = 'none'; };
 
+    const metaChildren = [
+        el('span', { className: 'profile-dept' }, [profile.department || '']),
+        ', ',
+        el('span', { className: 'profile-inst' }, [profile.institution || ''])
+    ];
+    if (profile.location) metaChildren.push(', ' + profile.location);
+    if (profile.institute_tagline) {
+        metaChildren.push(el('span', { className: 'profile-tagline' }, [' - ' + profile.institute_tagline]));
+    }
+
     const profileDetails = el('div', { className: 'profile-details' }, [
-        el('h1', { className: 'profile-name' }, [`${profile.name}`]),
-        el('h2', { className: 'profile-title' }, [profile.designation || ""]),
-        el('div', { className: 'profile-meta' }, [
-            el('span', { className: 'profile-dept' }, [profile.department || '']),
-            ', ',
-            el('span', { className: 'profile-inst' }, [profile.institution || '']),
-            (profile.location ? ', ' + profile.location : ''),
-            (profile.institute_tagline ? el('span', { className: 'profile-tagline' }, [" - " + profile.institute_tagline]) : null)
-        ])
+        el('h1', { className: 'profile-name' }, [profile.name || '']),
+        el('h2', { className: 'profile-title' }, [profile.designation || '']),
+        el('div', { className: 'profile-meta' }, metaChildren)
     ]);
 
     const bioSection = el('section', { className: 'profile-bio-section' }, [
-        el('p', { className: 'profile-bio' }, [profile.shortBio || ""])
+        el('p', { className: 'profile-bio' }, [profile.shortBio || ''])
     ]);
 
     const socialLinksSection = el('section', { className: 'profile-socials-section' });
@@ -385,7 +390,7 @@ async function renderProfile(container) {
     if (profile.researcherIds) {
         Object.entries(profile.researcherIds).forEach(([platform, url]) => {
             if (url) {
-                const label = platform.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+                const label = platform.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim();
                 socialLinks.appendChild(
                     el('a', {
                         href: url,
@@ -401,6 +406,7 @@ async function renderProfile(container) {
     socialLinksSection.appendChild(socialLinksTitle);
     socialLinksSection.appendChild(socialLinks);
 
+    container.innerHTML = '';
     container.appendChild(
         el('section', { className: 'profile-header' }, [
             profileDetails,
@@ -420,24 +426,30 @@ async function renderExperience(container) {
     }
 
     const fragment = document.createDocumentFragment();
+
+    // NOTE: Hero image path yahan badlo
     renderPageHero(fragment, 'Experience', 'assets/images/hero/experince.png');
 
     const list = el('ul', { className: 'timeline-list' });
 
     data.experience.forEach(exp => {
         let itemId = '';
-        const posLower = exp.position.toLowerCase();
+        const posLower = (exp.position || '').toLowerCase();
         if (posLower.includes('post-doctoral') || posLower.includes('post doc')) itemId = 'post-doc';
 
-        const item = el('li', { className: 'timeline-item', id: itemId }, [
-            el('h3', { className: 'position' }, [exp.position]),
+        const itemAttrs = { className: 'timeline-item' };
+        if (itemId) itemAttrs.id = itemId;
+
+        const children = [
+            el('h3', { className: 'position' }, [exp.position || '']),
             el('div', { className: 'meta' }, [
-                el('span', { className: 'institution' }, [exp.institution]),
-                el('span', { className: 'period' }, [exp.period])
-            ]),
-            exp.details ? el('p', { className: 'details' }, [exp.details]) : null
-        ].filter(Boolean));
-        list.appendChild(item);
+                el('span', { className: 'institution' }, [exp.institution || '']),
+                el('span', { className: 'period' }, [exp.period || ''])
+            ])
+        ];
+        if (exp.details) children.push(el('p', { className: 'details' }, [exp.details]));
+
+        list.appendChild(el('li', itemAttrs, children));
     });
 
     fragment.appendChild(list);
@@ -453,6 +465,7 @@ async function renderResearch(container) {
 
     const fragment = document.createDocumentFragment();
 
+    // NOTE: Ye images badlo apne hisaab se
     const resImages = [
         'assets/images/hero/research2.jpg',
         'assets/images/hero/research1.png',
@@ -487,6 +500,7 @@ async function renderPublications(container) {
 
     const fragment = document.createDocumentFragment();
 
+    // NOTE: Ye images badlo apne hisaab se
     const pubImages = [
         'assets/images/hero/journal1.png',
         'assets/images/hero/journal2.png'
@@ -505,15 +519,15 @@ async function renderPublications(container) {
             const citation = [];
 
             if (pub.authors) citation.push(el('span', { className: 'authors' }, [pub.authors + '. ']));
-            if (pub.title) citation.push(el('strong', { className: 'pub-title' }, [`"${pub.title}". `]));
+            if (pub.title)   citation.push(el('strong', { className: 'pub-title' }, [`"${pub.title}". `]));
 
             const venue = pub.journal || pub.conference || pub.book;
             if (venue) citation.push(el('em', { className: 'venue' }, [venue + ', ']));
 
             const detailsParts = [];
-            if (pub.volume) detailsParts.push(`Vol. ${pub.volume}`);
-            if (pub.pages) detailsParts.push(`pp. ${pub.pages}`);
-            if (pub.year) detailsParts.push(`${pub.year}`);
+            if (pub.volume)   detailsParts.push(`Vol. ${pub.volume}`);
+            if (pub.pages)    detailsParts.push(`pp. ${pub.pages}`);
+            if (pub.year)     detailsParts.push(`${pub.year}`);
             if (pub.location) detailsParts.push(`${pub.location}`);
 
             if (detailsParts.length > 0) {
@@ -522,7 +536,10 @@ async function renderPublications(container) {
 
             if (pub.doi) {
                 const doiUrl = pub.doi.startsWith('http') ? pub.doi : `https://doi.org/${pub.doi}`;
-                citation.push(el('a', { href: doiUrl, className: 'doi-link', target: '_blank' }, [' [DOI]']));
+                citation.push(el('a', {
+                    href: doiUrl, className: 'doi-link',
+                    target: '_blank', rel: 'noopener noreferrer'
+                }, [' [DOI]']));
             }
 
             list.appendChild(el('li', { className: 'pub-item' }, citation));
@@ -553,6 +570,7 @@ async function renderTeaching(container) {
 
     const fragment = document.createDocumentFragment();
 
+    // NOTE: Ye images badlo apne hisaab se
     const teachImages = [
         'assets/images/hero/teaching2.png',
         'assets/images/hero/teaching1.png'
@@ -593,6 +611,7 @@ async function renderStudents(container) {
 
     const fragment = document.createDocumentFragment();
 
+    // NOTE: Ye images badlo apne hisaab se
     const studImages = [
         'assets/images/hero/student&mentor1.png',
         'assets/images/hero/student&mentor2.png'
@@ -604,8 +623,8 @@ async function renderStudents(container) {
         const list = el('ul', { className: 'student-list' });
         data.phdScholars.forEach(student => {
             const content = [
-                el('strong', {}, [student.name]),
-                student.topic ? el('span', {}, [` - ${student.topic}`]) : null,
+                el('strong', {}, [student.name || '']),
+                student.topic  ? el('span', {},                      [` - ${student.topic}`])  : null,
                 student.status ? el('span', { className: 'status' }, [` (${student.status})`]) : null
             ].filter(Boolean);
             list.appendChild(el('li', {}, content));
@@ -618,9 +637,9 @@ async function renderStudents(container) {
         const list = el('ul', { className: 'student-list' });
         data.mastersStudents.forEach(student => {
             const content = [
-                el('strong', {}, [student.name]),
-                student.topic ? el('span', {}, [` - ${student.topic}`]) : null,
-                student.year ? el('span', { className: 'year' }, [` (${student.year})`]) : null
+                el('strong', {}, [student.name || '']),
+                student.topic ? el('span', {},                    [` - ${student.topic}`]) : null,
+                student.year  ? el('span', { className: 'year' }, [` (${student.year})`]) : null
             ].filter(Boolean);
             list.appendChild(el('li', {}, content));
         });
@@ -631,11 +650,11 @@ async function renderStudents(container) {
         fragment.appendChild(el('h2', {}, ['Bachelor Projects']));
         const list = el('ul', { className: 'student-list' });
         data.bachelorProjects.forEach(project => {
-            const studentNames = Array.isArray(project.students) ? project.students.join(', ') : project.students;
+            const studentNames = Array.isArray(project.students) ? project.students.join(', ') : (project.students || '');
             const content = [
                 el('strong', {}, [studentNames]),
-                project.title ? el('span', {}, [`: "${project.title}"`]) : null,
-                project.year ? el('span', { className: 'year' }, [` (${project.year})`]) : null
+                project.title ? el('span', {},                    [`: "${project.title}"`]) : null,
+                project.year  ? el('span', { className: 'year' }, [` (${project.year})`])  : null
             ].filter(Boolean);
             list.appendChild(el('li', {}, content));
         });
@@ -654,6 +673,7 @@ async function renderEvents(container) {
 
     const fragment = document.createDocumentFragment();
 
+    // NOTE: Ye images badlo apne hisaab se
     const eventImages = [
         'assets/images/hero/confrence1.png',
         'assets/images/hero/confrence 2.png'
@@ -669,10 +689,10 @@ async function renderEvents(container) {
         const list = el('ul', { className: 'event-list' });
         events.forEach(event => {
             const content = [
-                el('strong', {}, [event.title || event.event]),
-                event.location ? el('span', {}, [`, ${event.location}`]) : null,
-                event.year ? el('span', { className: 'year' }, [` (${event.year})`]) : null,
-                event.role ? el('span', { className: 'role' }, [` - ${event.role}`]) : null
+                el('strong', {}, [event.title || event.event || '']),
+                event.location ? el('span', {},                    [`, ${event.location}`]) : null,
+                event.year     ? el('span', { className: 'year' }, [` (${event.year})`])   : null,
+                event.role     ? el('span', { className: 'role' }, [` - ${event.role}`])   : null
             ].filter(Boolean);
             list.appendChild(el('li', {}, content));
         });
@@ -697,6 +717,8 @@ async function renderContact(container) {
     }
 
     const fragment = document.createDocumentFragment();
+
+    // NOTE: Hero image path yahan badlo
     renderPageHero(fragment, 'Contact', 'assets/images/hero/contact1.png');
 
     const card = el('div', { className: 'contact-card' });
@@ -715,7 +737,7 @@ async function renderContact(container) {
     if (data.institutionalPage) {
         card.appendChild(el('p', {}, [
             el('strong', {}, ['Institutional Page: ']),
-            el('a', { href: data.institutionalPage, target: '_blank' }, ['Faculty Profile'])
+            el('a', { href: data.institutionalPage, target: '_blank', rel: 'noopener noreferrer' }, ['Faculty Profile'])
         ]));
     }
 
@@ -724,7 +746,7 @@ async function renderContact(container) {
         const linkList = el('ul', { className: 'link-list' });
         data.links.forEach(link => {
             linkList.appendChild(el('li', {}, [
-                el('a', { href: link.url, target: '_blank', className: 'external-link' }, [link.label])
+                el('a', { href: link.url, target: '_blank', rel: 'noopener noreferrer', className: 'external-link' }, [link.label])
             ]));
         });
         card.appendChild(linkList);
@@ -743,32 +765,32 @@ async function renderDegreeDetail(container, jsonFilename) {
 
     const fragment = document.createDocumentFragment();
 
+    // NOTE: data.heroImage aur data.gallery se images aati hain
+    // Aap JSON file me ye paths badal sakte ho
     const heroImages = [];
     if (data.heroImage) heroImages.push(data.heroImage);
-    if (data.gallery) heroImages.push(...data.gallery);
+    if (data.gallery)   heroImages.push(...data.gallery);
 
     if (heroImages.length > 1) {
-        renderHeroCarousel(fragment, data.title, heroImages);
+        renderHeroCarousel(fragment, data.title || '', heroImages);
     } else if (heroImages.length === 1) {
-        renderPageHero(fragment, data.title, heroImages[0]);
+        renderPageHero(fragment, data.title || '', heroImages[0]);
     } else {
-        fragment.appendChild(el('h1', {}, [data.title]));
+        fragment.appendChild(el('h1', {}, [data.title || '']));
     }
 
     const headerContent = [];
     if (data.logo) {
-        const logo = el('img', { src: data.logo, alt: 'Institution Logo', className: 'detail-logo' });
-        headerContent.push(logo);
+        headerContent.push(el('img', { src: data.logo, alt: 'Institution Logo', className: 'detail-logo' }));
     }
 
     const metaInfo = el('div', { className: 'detail-meta-group' }, [
-        el('h2', { className: 'institution-name' }, [data.institution]),
-        el('div', { className: 'year-badge' }, [data.year])
+        el('h2', { className: 'institution-name' }, [data.institution || '']),
+        el('div', { className: 'year-badge' }, [data.year || ''])
     ]);
     headerContent.push(metaInfo);
 
-    const header = el('header', { className: 'detail-header' }, headerContent);
-    fragment.appendChild(header);
+    fragment.appendChild(el('header', { className: 'detail-header' }, headerContent));
 
     if (data.description && Array.isArray(data.description)) {
         const descSection = el('section', { className: 'detail-description' });
@@ -779,13 +801,12 @@ async function renderDegreeDetail(container, jsonFilename) {
     }
 
     if (data.thesis) {
-        const thesisBox = el('div', { className: 'thesis-box' }, [
+        fragment.appendChild(el('div', { className: 'thesis-box' }, [
             el('h2', {}, ['Thesis']),
-            el('h3', { className: 'thesis-title' }, [data.thesis.title]),
-            el('p', { className: 'thesis-supervisor' }, [`Supervisor: ${data.thesis.supervisor}`]),
-            el('p', { className: 'thesis-desc' }, [data.thesis.description])
-        ]);
-        fragment.appendChild(thesisBox);
+            el('h3', { className: 'thesis-title' },      [data.thesis.title       || '']),
+            el('p',  { className: 'thesis-supervisor' }, [`Supervisor: ${data.thesis.supervisor || ''}`]),
+            el('p',  { className: 'thesis-desc' },       [data.thesis.description  || ''])
+        ]));
     }
 
     container.appendChild(fragment);
@@ -803,7 +824,6 @@ async function init() {
     try {
         renderHeader(pageId);
         renderFooter();
-        // FIX: Document-level close listener initialize karo header render ke baad
         initMobileNavClose();
     } catch (error) {
         console.error('Header/Footer render error:', error);
@@ -816,9 +836,6 @@ async function init() {
             switch (pageId) {
                 case 'index':
                     await renderProfile(mainContainer);
-                    break;
-                case 'education':
-                    await renderEducation(mainContainer);
                     break;
                 case 'experience':
                     await renderExperience(mainContainer);
@@ -859,9 +876,7 @@ async function init() {
             }
 
             const loadingMsg = mainContainer.querySelector('.status-message');
-            if (loadingMsg && loadingMsg.textContent === 'Loading content...') {
-                loadingMsg.remove();
-            }
+            if (loadingMsg) loadingMsg.remove();
 
         } catch (error) {
             console.error('Render error:', error);
