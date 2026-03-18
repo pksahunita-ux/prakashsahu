@@ -524,7 +524,9 @@ li {
     }
 
     .dropdown.open .dropdown-menu {
-        display: block;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
         animation: slideDown 0.3s ease-out;
     }
 
