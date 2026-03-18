@@ -1,0 +1,24 @@
+{
+    "title": "Ph.D. in Mechanical Engineering",
+    "specialization": "Manufacturing Engineering & Metallurgy",
+    "institution": "Indian Institute of Technology Guwahati (IIT Guwahati)",
+    "department": "Mechanical Engineering",
+    "location": "Guwahati, Assam, India",
+    "year_awarded": "2017",
+    "year": "2012 - 2017",
+    "logo": "assets/images/education/phd1.png",
+    "description": [
+        "Conducted extensive research in the field of Manufacturing Engineering, focusing on solid-state joining technologies, especially Friction Stir Welding (FSW) of lightweight alloys.",
+        "Contributed significantly to the understanding and improvement of FSW processes for enhancing weld qualities of magnesium and aluminium alloys."
+    ],
+    "thesis": {
+        "title": "Enhancement of Weld Qualities in Friction Stir Welding",
+        "supervisor": "Dr. Sukhomay Pal, Professor, IIT Guwahati",
+        "description": "Investigated the effects of various process parameters and tool geometries on mechanical properties and microstructural characteristics of friction stir welded joints. Work involved extensive experimentation, optimization techniques, and metallurgical characterization."
+    },
+    "gallery": [
+        "assets/images/education/phd1.png",
+        "assets/images/education/phd2.jpg",
+        "assets/images/education/phd3.jpg"
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "undergraduateCourses": [
+        "Basic Manufacturing Process",
+        "Additive Manufacturing",
+        "Robotics and Robot Applications",
+        "Manufacturing Process and Design",
+        "Advanced Manufacturing Processes",
+        "Industrial Automation",
+        "Ergonomics and Work System Design"
+    ],
+    "postgraduateCourses": [
+        "Advanced Manufacturing Processes",
+        "Advanced Welding and Casting Process",
+        "Non-Conventional Machining/Manufacturing"
+    ]
+}

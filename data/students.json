@@ -1,0 +1,63 @@
+{
+    "phdScholars": [
+        {
+            "name": "Mr. Chinmay Prasad Nanda",
+            "topic": "Optimization and characterization in friction stir and additive manufacturing (Continuing at KIIT University)",
+            "status": "Ongoing since July 2022"
+        }
+    ],
+    "mastersStudents": [
+        {
+            "name": "Mr. Chinmay Prasad Nanda",
+            "topic": "Optimization of the process parameters in friction stir additive manufacturing",
+            "status": "Completed July 2022"
+        }
+    ],
+    "bachelorProjects": [
+        {
+            "students": [
+                "Mohammad Sahil",
+                "Nikitesh Mohanty",
+                "Nirbhay Shahi",
+                "Prakash Sah"
+            ],
+            "title": "Product Development by Additive Manufacturing and 3D Printer Technology for Aerospace Industry",
+            "status": "Completed",
+            "year": "2020–2021"
+        },
+        {
+            "students": [
+                "Supreet Acharya",
+                "Animesh Biswas"
+            ],
+            "title": "Application of 3D Printing Technology in Rapid Construction",
+            "status": "Completed",
+            "year": "2021–2022"
+        },
+        {
+            "students": [
+                "Souvik Saha",
+                "Rakesh Yadav"
+            ],
+            "title": "A Review on Friction Stir Processing of Mg Alloy",
+            "status": "Completed",
+            "year": "2021–2022"
+        },
+        {
+            "students": [
+                "Anmol Bhengra"
+            ],
+            "title": "A Review on Friction Stir Additive Manufacturing of Mg Alloy",
+            "status": "Completed",
+            "year": "2021–2022"
+        },
+        {
+            "students": [
+                "Aman Kumar Singh"
+            ],
+            "title": "Design and Development of 3D Printer for Concrete Building Construction",
+            "status": "Ongoing",
+            "year": "2022–Present"
+        }
+    ]
+}

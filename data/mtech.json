@@ -1,0 +1,20 @@
+{
+    "title": "Master of Engineering (M.E.) in Mechanical Engineering",
+    "institution": "Indian Institute of Engineering Science and Technology (IIEST), Shibpur, West Bengal, India",
+    "year": "2009 – 2011",
+    "logo": "assets/images/education/mtech1.jpg",
+    "description": [
+        "Specialized in Mechanical Engineering with a focus on materials and manufacturing technology.",
+        "Emphasis on advanced material synthesis, characterization, and chemical aspects of manufacturing processes through experimental and analytical methods.",
+        "Awarded MHRD Fellowship for academic excellence."
+    ],
+    "thesis": {
+        "title": "Development of ceramic cutting tool material by chemical synthesis",
+        "supervisor": "Prof. Ashim Guha",
+        "description": "Research focused on synthesizing novel ceramic materials for cutting tools using chemical synthesis methods, aiming to improve wear resistance and thermal stability in machining and manufacturing operations."
+    },
+    "gallery": [
+        "assets/images/education/mtech1.jpg",
+        "assets/images/education/mtech2.png"
+    ]
+}

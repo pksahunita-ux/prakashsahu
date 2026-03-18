@@ -1,0 +1,23 @@
+{
+    "title": "Post-Doctoral Fellow",
+    "institution": "Tsinghua University",
+    "department": "Department of Mechanical Engineering",
+    "location": "Beijing, China",
+    "year": "2018 - 2020",
+    "logo": "assets/images/education/postdoc4.png",
+    "description": [
+        "Advanced research at one of the world's leading universities (QS Rank 15, THE Rank 10, Asia Rank 1).",
+        "Focused on the fabrication and characterization of novel magnesium alloys and composites, including mechanical analysis, microstructural evaluation, and degradation behavior for structural and biomedical applications.",
+        "Guided and mentored master's and Ph.D. students of the supervising group."
+    ],
+    "research": {
+        "title": "Novel Magnesium Alloys and Composites",
+        "supervisor": "Prof. Qingyu Shi",
+        "description": "Development of high-performance magnesium-based materials, with in-depth analysis of microstructure-property relationships and corrosion/degradation mechanisms."
+    },
+    "gallery": [
+        "assets/images/education/postdoc1.png",
+        "assets/images/education/postdoc2.jpg",
+        "assets/images/education/postdoc3.jpg"
+    ]
+}

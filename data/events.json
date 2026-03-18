@@ -1,0 +1,64 @@
+{
+    "conferences": [
+        {
+            "title": "International Conference COPEN-8",
+            "event": "COPEN-8",
+            "year": "2013",
+            "location": "NIT Calicut, Kerala, India",
+            "role": "Attendee/Presenter"
+        },
+        {
+            "title": "IIW-IC-2014",
+            "event": "IIW-IC-2014",
+            "year": "2014",
+            "location": "New Delhi, India",
+            "role": "Attendee/Presenter"
+        },
+        {
+            "title": "AIMTDR 2014",
+            "event": "AIMTDR",
+            "year": "2014",
+            "location": "IIT Guwahati, India",
+            "role": "Attendee/Presenter"
+        },
+        {
+            "title": "AIMTDR 2016",
+            "event": "AIMTDR",
+            "year": "2016",
+            "location": "College of Engineering, Pune, Maharashtra, India",
+            "role": "Attendee/Presenter"
+        }
+    ],
+    "workshops": [
+        {
+            "title": "Recent Trends in Manufacturing Processes",
+            "role": "Coordinator",
+            "year": "2024",
+            "location": "NIT Agartala"
+        },
+        {
+            "title": "Material Processing and Characterization of Magnesium Alloy (Faculty Development Programme on Welding Technology)",
+            "role": "Invited Speaker",
+            "year": "2020",
+            "location": "JAIN University, Bengaluru, India"
+        },
+        {
+            "title": "Design & Manufacturing of a Hand Injection Mould",
+            "role": "Attendee",
+            "year": "",
+            "location": "CTTC Bhubaneswar, India"
+        },
+        {
+            "title": "Reverse Engineering",
+            "role": "Attendee",
+            "year": "",
+            "location": "Birla Tyres, Balasore, India"
+        },
+        {
+            "title": "Mobile Workshop",
+            "role": "Attendee",
+            "year": "",
+            "location": "ITR, Chandipur, Balasore, India"
+        }
+    ]
+}

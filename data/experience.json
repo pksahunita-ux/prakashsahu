@@ -1,0 +1,44 @@
+{
+    "experience": [
+        {
+            "position": "Assistant Professor",
+            "institution": "National Institute of Technology Agartala",
+            "department": "Production Engineering",
+            "period": "September 2022 - Present",
+            "location": "Agartala, India",
+            "details": "Teaching undergraduate and postgraduate students, supervising research scholars, conducting research in advanced manufacturing and materials engineering, and serving in various departmental and institutional administrative roles."
+        },
+        {
+            "position": "Assistant Professor",
+            "institution": "KIIT University",
+            "department": "School of Mechanical Engineering",
+            "period": "July 2017 - August 2022 (with study leave Feb 2018 – Feb 2020)",
+            "location": "Bhubaneswar, India",
+            "details": "Teaching UG/PG students; supervising M.Tech and Ph.D students; research in manufacturing, materials, friction stir welding, additive manufacturing; various administrative duties."
+        },
+        {
+            "position": "Post-Doctoral Fellow",
+            "institution": "Tsinghua University",
+            "department": "Department of Mechanical Engineering",
+            "period": "Feb 2018 - Feb 2020",
+            "location": "Beijing, China",
+            "details": "Study leave from KIIT University. Research in fabrication and characterization of novel Magnesium alloys and composites; mechanical analysis; mentoring Master's and Ph.D. students of supervisor."
+        },
+        {
+            "position": "Ph.D. Research Fellow",
+            "institution": "Indian Institute of Technology Guwahati (IIT Guwahati)",
+            "department": "Mechanical Engineering",
+            "period": "Jan 2012 - June 2017",
+            "location": "Guwahati, India",
+            "details": "Specialization in Manufacturing Engineering and Metallurgy; research focused on friction stir welding of lightweight metals (Mg, Al); five years of teaching assistance in various courses; hands-on operation of SEM, FESEM, WC-EDM, and other advanced equipment; development/modification of welding machines."
+        },
+        {
+            "position": "Assistant Professor",
+            "institution": "SOA University",
+            "department": "Mechanical Engineering",
+            "period": "June 2011 - Dec 2012",
+            "location": "Bhubaneswar, India",
+            "details": "Teaching and research in mechanical engineering."
+        }
+    ]
+}
