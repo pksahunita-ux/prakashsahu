@@ -67,7 +67,7 @@ async function fetchJSON(filename) {
 function el(tag, attributes = {}, children = []) {
     const element = document.createElement(tag);
 
-    // Set attributes
+    // Set attributes and properties
     Object.entries(attributes).forEach(([key, value]) => {
         if (key === 'className') {
             element.className = value;
@@ -77,6 +77,8 @@ function el(tag, attributes = {}, children = []) {
             });
         } else if (key.startsWith('on') && typeof value === 'function') {
             element[key] = value;
+        } else if (key === 'innerHTML') {
+            element.innerHTML = value;
         } else {
             element.setAttribute(key, value);
         }
@@ -173,6 +175,11 @@ function toggleMenu() {
         toggleBtn.setAttribute('aria-expanded', 'false');
         toggleBtn.innerHTML = menuIcon;
         document.body.style.overflow = ''; // Restore scrolling
+        
+        // Reset all dropdowns when closing the menu
+        setTimeout(() => {
+            document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+        }, 300); // Wait for transition
     } else {
         nav.classList.add('active');
         toggleBtn.setAttribute('aria-expanded', 'true');
@@ -185,11 +192,22 @@ function toggleMenu() {
  * Handles dropdown toggling on mobile.
  */
 function toggleDropdown(event) {
+    // If it's a mobile view, handle the toggle
     if (window.innerWidth <= 768) {
-        event.preventDefault(); // Prevent link navigation if it's a parent
+        event.preventDefault();
         event.stopPropagation();
 
         const parent = event.currentTarget.parentElement; // The li.dropdown
+        const isOpen = parent.classList.contains('open');
+
+        // Close ALL other open dropdowns first for a cleaner "accordion" feel
+        document.querySelectorAll('.dropdown.open').forEach(openDropdown => {
+            if (openDropdown !== parent) {
+                openDropdown.classList.remove('open');
+            }
+        });
+
+        // Toggle the current one
         parent.classList.toggle('open');
     }
 }
@@ -219,10 +237,11 @@ function renderHeader(activePageId) {
             }, [
                 item.label,
                 // Arrow Icon
-                el('span', { className: 'arrow-icon', innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>` })
+                el('span', { 
+                    className: 'arrow-icon', 
+                    innerHTML: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>` 
+                })
             ]);
-            // Fix innerHTML
-            label.querySelector('.arrow-icon').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
 
             const dropdownMenu = el('ul', { className: 'dropdown-menu' });
 
