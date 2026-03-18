@@ -58,7 +58,7 @@
     box-shadow: var(--shadow-md);
 }
 
-/* Mobile Menu Button - Hidden by default */
+/* Mobile Menu Button - Hidden by default on desktop */
 .mobile-menu-btn {
     display: none;
     background: none;
@@ -67,6 +67,11 @@
     padding: var(--space-xs);
     color: var(--color-text-primary);
     z-index: 200;
+    /* FIX: Minimum touch target 44px for mobile */
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
 }
 
 .header-controls {
@@ -122,7 +127,7 @@
     transform-origin: left;
 }
 
-/* --- Dropdowns --- */
+/* --- Dropdowns (Desktop - CSS hover se) --- */
 .dropdown {
     position: relative;
 }
@@ -144,6 +149,7 @@
     z-index: 1000;
 }
 
+/* Desktop: hover se dropdown open */
 .dropdown:hover .dropdown-menu {
     opacity: 1;
     visibility: visible;
@@ -165,6 +171,14 @@
 .dropdown-menu a.active {
     background-color: var(--color-accent-subtle);
     color: var(--color-accent);
+}
+
+/* Arrow icon */
+.arrow-icon {
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+    pointer-events: none; /* Arrow click should not interfere */
 }
 
 /* Theme Toggle Button */
@@ -456,17 +470,20 @@ li {
     margin-bottom: var(--space-xl);
 }
 
-/* --- Responsive Adjustments --- */
+/* =========================================
+   MOBILE STYLES (max-width: 768px)
+   ========================================= */
 @media (max-width: 768px) {
     .nav-container {
         padding: var(--space-sm) var(--space-md);
     }
 
+    /* Mobile menu button dikhao */
     .mobile-menu-btn {
-        display: block;
+        display: flex;
     }
 
-    /* Mobile Navigation Overlay */
+    /* ---- Mobile Navigation Drawer ---- */
     .main-nav {
         position: fixed;
         top: var(--header-height);
@@ -474,83 +491,147 @@ li {
         width: 100%;
         height: calc(100vh - var(--header-height));
         background-color: var(--color-bg-body);
-        padding: var(--space-lg);
+        padding: var(--space-md) var(--space-lg);
+        /* FIX: translateX(100%) se right side se slide in karega */
         transform: translateX(100%);
-        transition: transform var(--transition-medium);
+        transition: transform 0.3s ease;
         overflow-y: auto;
         border-top: 1px solid var(--color-border);
         display: block;
-        /* Ensure it's not hidden by default display:flex from desktop if overridden, but actually desktop has display:block on nav */
-    }
-
-    /* Override desktop styles if they interfere */
-    .main-nav .nav-list {
-        flex-direction: column;
-        width: 100%;
+        z-index: 99;
+        /* Header (z-index: 100) ke neeche */
     }
 
     .main-nav.active {
         transform: translateX(0);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
     }
 
-    .nav-list {
+    /* Nav list mobile layout */
+    .main-nav .nav-list {
         flex-direction: column;
-        gap: var(--space-md);
-        align-items: center;
-        text-align: center;
+        gap: 0;
+        width: 100%;
+        align-items: stretch;
+        text-align: left;
     }
 
+    /* Har nav item */
+    .main-nav .nav-list > li {
+        border-bottom: 1px solid var(--color-border-subtle);
+    }
+
+    .main-nav .nav-list > li:last-child {
+        border-bottom: none;
+    }
+
+    /* Nav links mobile */
     .nav-list a {
-        font-size: 1.15rem;
-        display: flex;
+        font-size: 1.05rem;
+        padding: var(--space-sm) var(--space-xs);
+        width: 100%;
+        /* FIX: justify-content space-between taaki arrow right side mein rahe */
         justify-content: space-between;
-        padding: var(--space-sm) 0;
-        width: 100%;
+        /* FIX: Minimum touch target */
+        min-height: 48px;
     }
 
-    /* Mobile Dropdown */
-    .dropdown-menu {
-        position: static;
-        box-shadow: none;
-        border: none;
-        background-color: var(--color-bg-surface);
-        padding-left: var(--space-md);
+    /* Desktop underline animation mobile pe remove */
+    .nav-list > li > a::after {
         display: none;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        width: 100%;
     }
 
-    .dropdown.open .dropdown-menu {
-        display: block !important;
+    /* ---- Mobile Dropdown (Sub-drawer) ---- 
+       FIX: Ye MAIN fix hai — desktop pe position:absolute tha
+       Mobile pe static aur hidden hona chahiye
+    */
+    .dropdown-menu {
+        /* Desktop absolute positioning override karo */
+        position: static !important;
+        top: auto !important;
+        left: auto !important;
+        /* Box reset */
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        min-width: unset !important;
+        /* Visibility reset — mobile pe JS se control karenge */
         opacity: 1 !important;
         visibility: visible !important;
-        animation: slideDown 0.3s ease-out;
+        transform: none !important;
+        /* FIX: Default me hidden */
+        display: none;
+        /* Background aur padding */
+        background-color: var(--color-bg-surface);
+        padding: var(--space-xs) 0 var(--space-xs) var(--space-md);
+        width: 100%;
+        /* Smooth open animation */
+        animation: none;
     }
 
-    .arrow-icon {
-        transition: transform 0.3s ease;
+    /* FIX: Jab .dropdown.open ho tab dropdown-menu dikhao */
+    .dropdown.open > .dropdown-menu {
+        display: block;
+        animation: slideDown 0.25s ease-out;
     }
 
+    /* Arrow icon rotate when open */
     .dropdown.open .arrow-icon {
         transform: rotate(180deg);
     }
 
+    /* Dropdown toggle button — poora row clickable */
+    .dropdown-toggle {
+        display: flex !important;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        /* FIX: Cursor pointer confirm karo */
+        cursor: pointer;
+        /* FIX: user-select none taaki text select na ho tap par */
+        user-select: none;
+        -webkit-user-select: none;
+        /* Touch highlight remove */
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Sub-menu items */
+    .dropdown-menu li {
+        margin: 0;
+        border-bottom: none;
+    }
+
+    .dropdown-menu a {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: 0.95rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        white-space: normal;
+        color: var(--color-text-secondary);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .dropdown-menu a:hover,
+    .dropdown-menu a.active {
+        background-color: var(--color-accent-subtle);
+        color: var(--color-accent);
+        border-radius: var(--radius-sm);
+    }
+
+    /* Slide down animation */
     @keyframes slideDown {
         from {
             opacity: 0;
-            transform: translateY(-10px);
+            transform: translateY(-8px);
         }
-
         to {
             opacity: 1;
             transform: translateY(0);
         }
     }
 
-    /* Adjust profile header for mobile */
+    /* Profile mobile */
     .profile-header {
         flex-direction: column;
         align-items: center;
@@ -607,8 +688,6 @@ li {
 }
 
 /* --- Visual Enhancements --- */
-
-/* Home Profile */
 .intro-section {
     margin-bottom: var(--space-xl);
 }
@@ -624,7 +703,6 @@ li {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    /* Circular */
     object-fit: cover;
     border: 4px solid var(--color-bg-surface);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -646,7 +724,6 @@ li {
 .edu-header {
     display: flex;
     align-items: flex-start;
-    /* Align top */
     gap: var(--space-md);
     margin-bottom: var(--space-sm);
 }
@@ -657,7 +734,6 @@ li {
     border-radius: var(--radius-sm);
     object-fit: contain;
     background-color: white;
-    /* Ensure transparency looks good */
     padding: 4px;
     border: 1px solid var(--color-border-subtle);
 }
@@ -669,7 +745,6 @@ li {
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    /* Responsive grid */
     gap: var(--space-sm);
     margin-top: var(--space-md);
 }
